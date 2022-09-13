@@ -31,13 +31,13 @@ You are encouraged to:
 
 - Leverage the latest Java language features.
 - Add your own classes and methods to faciliate your implementation.
-- Construct extra test cases to throughly validate your implementation and share them with your classmates (or TAs). 
+- Construct extra test cases to throughly validate your implementation and share them with your classmates (or TAs).
   Note that no bonus will be given for this because we don't want the PA to be so [chur](https://learning.hku.hk/ccch9051/group-18/items/show/59).
 
 You are not allowed to:
 
 - Remove or modify the test code (in `src/test/java`) provided by us.
-- Delete or change the signature (name, arguments, visibility, etc.) of any given classes or methods in the skeleton code. 
+- Delete or change the signature (name, arguments, visibility, etc.) of any given classes or methods in the skeleton code.
 - Share your implementation with your classmates.
 
 ## Submission
@@ -55,7 +55,7 @@ Note that we are using automatic scripts to process your submission.
 **DO NOT add extra explanation** to the file; otherwise they will prevent our scripts from correctly processing your submission.
 Feel free to send us an email if you need clarification.
 
-You need to submit the file to [CASS](https://cssystem.cse.ust.hk/UGuides/cass/index.html). 
+You need to submit the file to [CASS](https://cssystem.cse.ust.hk/UGuides/cass/index.html).
 The deadline for this assignment is **September 30, 2022, 23:59:59** (inclusive).
 
 **We will grade your submission based on the latest committed version before the deadline.**
@@ -77,10 +77,10 @@ Here we list some key points.
 - `@` represents box destinations.
 - `#` represents walls.
 - `A-Z` upper-case letters represent players.
-    - Each letter represents a player.
-    - There should not be duplicate letters in a map.
+  - Each letter represents a player.
+  - There should not be duplicate letters in a map.
 - `a-z` lower-case letter represents boxes that can be moved by players with corresponding upper-case letters.
-    - E.g. boxes represented by `a` can only be moved by player `A`.
+  - E.g. boxes represented by `a` can only be moved by player `A`.
 - `.` represents empty position where a player can move to or move boxes to.
 - ` ` A space represent a position where it is not part of the map (e.g., when the map is not rectangular).
 
@@ -94,15 +94,15 @@ Here we list some key points.
 
 ### Actions
 
-- In PA1, the terminal based game supports up to 2 players. Such checking should be done in `hk.ust.comp3021.tui`. 
+- In PA1, the terminal based game supports up to 2 players. Such checking should be done in `hk.ust.comp3021.tui`.
 - Key `A,S,W,D` and `H,J,K,L` are used to move Player with ID 0 and 1 to `Left,Down,Up,Right` direction by 1 step, respectively
-- Key `U` are used to undo the last box movement. Undo is not specific to players and will revert the last box movement regardless of which player moves the last box. 
+- Key `U` are used to undo the last box movement. Undo is not specific to players and will revert the last box movement regardless of which player moves the last box.
 
 ### Undo
 
 - There is a limit on Undo actions, which is specified when game starts.
 - A checkpoint should be marked after every time a box is moved.
-- Undo actions reverts the game state to the last checkpoint.
+- Undo actions revert the game state to the previous checkpoint. For example, suppose by now `cp1` and `cp2` have been recorded, `undo` action should reverts the game state to `cp1`. The principle is to revert the last movement of the box.
 - Undo is global no matter which player moves a box.
 
 ### Winning Condition
@@ -111,26 +111,26 @@ Here we list some key points.
 
 ### Deadlock Condition
 
-- None of the boxes in the map is movable while the winning condition has not been satisfied.
+- Deadlock checking is not required. It is more about algorithm design and out of scope of this course.
+- Game should exit either when the game is won or the player performs `Exit` action.
 
 ### Map Validation
 
 - The map must be surrounded by walls.
 - All players, boxes and destinations must be inside the map.
 - Each player must have a box to move.
-- Each box is reachable by its player and movable.
 - The number of boxes must be equal to the number of destinations.
 - There must not be more than one upper-case letter for each player.
 
 
 ## Reference Implementation
 
-We provide a reference implementation of this assignment (it is obfuscated and you won't see solutions in it) [here](https://course.cse.ust.hk/comp3021/assignments/Sokoban-proguard.jar). 
-You can run it with the following command: 
+We provide a reference implementation of this assignment (it is obfuscated and you won't see solutions in it) [here](https://course.cse.ust.hk/comp3021/assignments/Sokoban-proguard.jar).
+You can run it with the following command:
 ```bash
 java --enable-preview -jar Sokoban-proguard.jar path/to/game/map/file.
 ```
-We provide two sample game map in the `src/main/resources` folder. 
+We provide two sample game map in the `src/main/resources` folder.
 
 ## Academic Integrity
 

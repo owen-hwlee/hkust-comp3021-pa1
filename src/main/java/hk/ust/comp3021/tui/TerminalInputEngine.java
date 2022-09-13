@@ -1,7 +1,6 @@
 package hk.ust.comp3021.tui;
 
-import hk.ust.comp3021.actions.Action;
-import hk.ust.comp3021.actions.InvalidInput;
+import hk.ust.comp3021.actions.*;
 import hk.ust.comp3021.game.InputEngine;
 import hk.ust.comp3021.utils.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
@@ -38,9 +37,40 @@ public class TerminalInputEngine implements InputEngine {
         final var inputLine = terminalScanner.nextLine();
 
         // TODO
-        // TODO: Implement WASD, undo and exit
-        throw new NotImplementedException();
+        String instruction = inputLine.strip().toUpperCase();
 
-//        return new InvalidInput();
+        // EXIT: exit game
+        if (instruction.equals("EXIT")) {
+            return new Exit(-1);
+        }
+
+        // ASWD: move Player with ID 0 to Left, Down, Up, Right
+        if (instruction.equals("A")) {
+            return new Move.Left(0);
+        } else if (instruction.equals("S")) {
+            return new Move.Down(0);
+        } else if (instruction.equals("W")) {
+            return new Move.Up(0);
+        } else if (instruction.equals("D")) {
+            return new Move.Right(0);
+        }
+
+        // HJKL: move Player with ID 1 to Left, Down, Up, Right
+        if (instruction.equals("H")) {
+            return new Move.Left(1);
+        } else if (instruction.equals("J")) {
+            return new Move.Down(1);
+        } else if (instruction.equals("K")) {
+            return new Move.Up(1);
+        } else if (instruction.equals("L")) {
+            return new Move.Right(1);
+        }
+
+        // U: undo to previous GameState
+        if (instruction.equals("U")) {
+            return new Undo(-1);
+        }
+
+        return new InvalidInput(-1, "Invalid Input.");
     }
 }

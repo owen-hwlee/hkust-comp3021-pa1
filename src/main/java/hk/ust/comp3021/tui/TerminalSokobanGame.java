@@ -48,7 +48,7 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
         while (!this.shouldStop()) {
             // Game loop
             this.renderingEngine.render(this.state);
-            this.renderingEngine.message("\nUndo Quota: {}".formatted(this.state.getUndoQuota()));
+            this.renderingEngine.message("\nUndo Quota: %d".formatted(this.state.getUndoQuota()));
             this.renderingEngine.message(">>>");
 
             // TODO: conduct the action fetched

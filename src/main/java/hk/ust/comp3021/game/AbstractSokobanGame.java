@@ -1,7 +1,6 @@
 package hk.ust.comp3021.game;
 
-import hk.ust.comp3021.actions.Action;
-import hk.ust.comp3021.actions.ActionResult;
+import hk.ust.comp3021.actions.*;
 import hk.ust.comp3021.utils.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +41,23 @@ public abstract class AbstractSokobanGame implements SokobanGame {
      */
     protected ActionResult processAction(@NotNull Action action) {
         // TODO
-        throw new NotImplementedException();
+        return switch (action) {
+            case InvalidInput invalidInput -> {
+                yield new ActionResult.Failed(action, "Invalid Input.");
+            }
+            case Exit exit -> {
+                // TODO: handle exit
+                yield new ActionResult.Success(action);
+            }
+            case Undo undo -> {
+                // TODO: handle undo
+                yield new ActionResult.Success(action);
+            }
+            case Move move -> {
+                // TODO: handle move
+                // if can't move, use ActionResult.Failed()
+                yield new ActionResult.Success(action);
+            }
+        };
     }
 }

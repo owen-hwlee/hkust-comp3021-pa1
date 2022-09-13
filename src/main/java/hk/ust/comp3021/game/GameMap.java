@@ -6,9 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A Sokoban game board.
@@ -94,7 +93,7 @@ public class GameMap {
         int maxHeight = mapTextLines.length - 1, maxWidth = 0;
         Set<Position> destinations = new HashSet<>();
         Set<Character> playerSet = new HashSet<>();
-        Set<Character> boxSet = new HashSet<>();
+        List<Character> boxList = new ArrayList<>();
 
         for (int i = 1; i < mapTextLines.length; ++i) {
             String currentLine = mapTextLines[i].strip();
@@ -117,7 +116,7 @@ public class GameMap {
 
                 // Case: Box
                 if (currentChar >= 'a' && currentChar <= 'z') {
-                    boxSet.add(currentChar);
+                    boxList.add(currentChar);
                     // TODO: add Entity to array
                 }
 
@@ -129,7 +128,6 @@ public class GameMap {
 
                 // Case: Destination
                 if (currentChar == '@') {
-                    // TODO: add Destination
                     destinations.add(Position.of(j, i - 1));
                 }
 
@@ -156,18 +154,18 @@ public class GameMap {
         }
 
         // Number of boxes and destinations mismatched
-        if (destinations.size() != boxSet.size()) {
+        if (destinations.size() != boxList.size()) {
             throw new IllegalArgumentException("Number of boxes is not equal to number of box destinations");
         }
 
         // Unmatched players and boxes
         for (char player: playerSet) {
-            if (!boxSet.contains(player + 'a' - 'A')) {
+            if (!boxList.contains((char)(player + 'a' - 'A'))) {
                 throw new IllegalArgumentException("Player has unmatched box");
             }
         }
-        for (char box: boxSet) {
-            if (!playerSet.contains(box + 'A' - 'a')) {
+        for (char box: boxList.stream().collect(Collectors.toSet())) {
+            if (!playerSet.contains((char)(box + 'A' - 'a'))) {
                 throw new IllegalArgumentException("Box has unmatched Player");
             }
         }

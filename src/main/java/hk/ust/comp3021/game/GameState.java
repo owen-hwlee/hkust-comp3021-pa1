@@ -23,6 +23,14 @@ import java.util.Set;
  */
 public class GameState {
 
+    // Current locations of all crates
+    private Set<Position> currentCratesLocations;
+    // One move history
+    // Current location of player
+    private Position currentPlayerLocation;
+    // Undo quota left
+    private int undoQuota;
+
     /**
      * Create a running game state from a game map.
      *

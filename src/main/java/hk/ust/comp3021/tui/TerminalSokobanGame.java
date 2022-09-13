@@ -1,6 +1,7 @@
 package hk.ust.comp3021.tui;
 
 
+import hk.ust.comp3021.actions.ActionResult;
 import hk.ust.comp3021.game.AbstractSokobanGame;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.InputEngine;
@@ -30,14 +31,31 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
         super(gameState);
         this.inputEngine = inputEngine;
         this.renderingEngine = renderingEngine;
-        // TODO
+        // DONE
         // Check the number of players
-        throw new NotImplementedException();
+        if (gameState.getAllPlayerPositions().size() > 2) {
+            throw new IllegalArgumentException("There cannot be more than two players in the map!");
+        }
     }
 
     @Override
     public void run() {
         // TODO
+        this.renderingEngine.message("Sokoban game is ready.");
+
+        // Game terminates when the game is won or the player performs Exit action
+        // Deadlock checking is not required
+        while (!this.shouldStop()) {
+            // Game loop
+            this.renderingEngine.render(this.state);
+            this.renderingEngine.message("\nUndo Quota: {}".formatted(this.state.getUndoQuota()));
+            this.renderingEngine.message(">>>");
+
+            // TODO: conduct the action fetched
+            ActionResult actionResult = this.processAction(this.inputEngine.fetchAction());
+
+            // TODO: update game states and map
+        }
         throw new NotImplementedException();
     }
 }

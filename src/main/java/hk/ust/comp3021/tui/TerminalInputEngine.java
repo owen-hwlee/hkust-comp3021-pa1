@@ -1,6 +1,7 @@
 package hk.ust.comp3021.tui;
 
 import hk.ust.comp3021.actions.Action;
+import hk.ust.comp3021.actions.InvalidInput;
 import hk.ust.comp3021.game.InputEngine;
 import hk.ust.comp3021.utils.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +38,9 @@ public class TerminalInputEngine implements InputEngine {
         final var inputLine = terminalScanner.nextLine();
 
         // TODO
+        // TODO: Implement WASD, undo and exit
         throw new NotImplementedException();
+
+//        return new InvalidInput();
     }
 }

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,6 +22,12 @@ import java.util.Set;
  */
 public class GameMap {
 
+    private int maxWidth;
+    private int maxHeight;
+    private Set<Position> destinations;
+    private int undoLimit;
+    private Entity[][] entities;
+
     /**
      * Create a new GameMap with width, height, set of box destinations and undo limit.
      *
@@ -33,8 +40,12 @@ public class GameMap {
      *                     -1 means unlimited. Other negative numbers are not allowed.
      */
     public GameMap(int maxWidth, int maxHeight, Set<Position> destinations, int undoLimit) {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
+        this.destinations = destinations;
+        this.undoLimit = undoLimit;
+        this.entities = new Entity[maxWidth][maxHeight];
     }
 
     /**
@@ -74,7 +85,94 @@ public class GameMap {
      */
     public static GameMap parse(String mapText) {
         // TODO
-        throw new NotImplementedException();
+        String[] mapTextLines = mapText.split("\n");
+        int undoLimit = Integer.parseInt(mapTextLines[0].strip());
+        if (undoLimit < -1) {
+            throw new IllegalArgumentException("undoLimit does not accept negative numbers smaller than -1.");
+        }
+
+        int maxHeight = mapTextLines.length - 1, maxWidth = 0;
+        Set<Position> destinations = new HashSet<>();
+        Set<Character> playerSet = new HashSet<>();
+        Set<Character> boxSet = new HashSet<>();
+
+        for (int i = 1; i < mapTextLines.length; ++i) {
+            String currentLine = mapTextLines[i].strip();
+            if (maxWidth < currentLine.length()) {
+                maxWidth = currentLine.length();
+            }
+            for (int j = 0; j < currentLine.length(); ++j) {
+                char currentChar = currentLine.charAt(j);
+
+                // Case: Player
+                if (currentChar >= 'A' && currentChar <= 'Z') {
+                    // Repeated Player
+                    if (playerSet.contains(currentChar)) {
+                        throw new IllegalArgumentException("Multiple same upper-case letters in map.");
+                    } else {
+                        playerSet.add(currentChar);
+                        // TODO: add Entity to array
+                    }
+                }
+
+                // Case: Box
+                if (currentChar >= 'a' && currentChar <= 'z') {
+                    boxSet.add(currentChar);
+                    // TODO: add Entity to array
+                }
+
+                // Case: Wall
+                if (currentChar == '#') {
+                    // TODO: add Wall
+                    // new Wall();
+                }
+
+                // Case: Destination
+                if (currentChar == '@') {
+                    // TODO: add Destination
+                    destinations.add(Position.of(j, i - 1));
+                }
+
+                // Case: Empty
+                if (currentChar == '.') {
+                    // new Empty();
+                }
+
+                // Case: null
+                if (currentChar == ' ') {
+                    // null;
+                }
+            }
+
+            // End of line but still not reach maxWidth
+            for (int j = currentLine.length(); j < maxWidth; ++j) {
+                // new Empty();
+            }
+        }
+
+        // No players
+        if (playerSet.isEmpty()) {
+            throw new IllegalArgumentException("There are no players in the map.");
+        }
+
+        // Number of boxes and destinations mismatched
+        if (destinations.size() != boxSet.size()) {
+            throw new IllegalArgumentException("Number of boxes is not equal to number of box destinations");
+        }
+
+        // Unmatched players and boxes
+        for (char player: playerSet) {
+            if (!boxSet.contains(player + 'a' - 'A')) {
+                throw new IllegalArgumentException("Player has unmatched box");
+            }
+        }
+        for (char box: boxSet) {
+            if (!playerSet.contains(box + 'A' - 'a')) {
+                throw new IllegalArgumentException("Box has unmatched Player");
+            }
+        }
+
+        return new GameMap(maxWidth, maxHeight, destinations, undoLimit);
     }
 
     /**
@@ -106,8 +204,8 @@ public class GameMap {
      * @return a set of positions.
      */
     public @NotNull @Unmodifiable Set<Position> getDestinations() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.destinations;
     }
 
     /**
@@ -116,8 +214,8 @@ public class GameMap {
      * @return undo limit.
      */
     public Optional<Integer> getUndoLimit() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return Optional.of(this.undoLimit);
     }
 
     /**
@@ -136,8 +234,8 @@ public class GameMap {
      * @return maximum width.
      */
     public int getMaxWidth() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.maxWidth;
     }
 
     /**
@@ -146,7 +244,7 @@ public class GameMap {
      * @return maximum height.
      */
     public int getMaxHeight() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.maxHeight;
     }
 }

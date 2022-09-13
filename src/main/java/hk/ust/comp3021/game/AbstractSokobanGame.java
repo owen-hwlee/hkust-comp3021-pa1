@@ -22,7 +22,18 @@ public abstract class AbstractSokobanGame implements SokobanGame {
      */
     protected boolean shouldStop() {
         // TODO
-        throw new NotImplementedException();
+
+        // User specified to exit
+        if (false) {    // TODO: implement specify to exit
+            return true;
+        }
+
+        // User won the game
+        if (this.state.isWin()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

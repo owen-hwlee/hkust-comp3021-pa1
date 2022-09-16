@@ -1,9 +1,6 @@
 package hk.ust.comp3021.tui;
 
-import hk.ust.comp3021.entities.Box;
-import hk.ust.comp3021.entities.Empty;
-import hk.ust.comp3021.entities.Player;
-import hk.ust.comp3021.entities.Wall;
+import hk.ust.comp3021.entities.*;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.Position;
 import hk.ust.comp3021.game.RenderingEngine;
@@ -32,11 +29,17 @@ public class TerminalRenderingEngine implements RenderingEngine {
             for (int x = 0; x <= state.getMapMaxWidth(); x++) {
                 final var entity = state.getEntity(Position.of(x, y));
                 final var charToPrint = switch (entity) {
-                    // TODO: handle box destinations '@'
+                    // DONE
                     case Wall ignored -> '#';
                     case Box b -> ('a' + b.getPlayerId());
                     case Player p -> ('A' + p.getId());
-                    case Empty ignored -> '.';
+                    case Empty ignored -> {
+                        if (state.getDestinations().contains(Position.of(x, y))) {
+                            yield '@';
+                        } else {
+                            yield '.';
+                        }
+                    }
                     case null -> ' ';
                 };
                 builder.append(charToPrint);

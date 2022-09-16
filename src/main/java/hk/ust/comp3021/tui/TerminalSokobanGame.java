@@ -6,7 +6,6 @@ import hk.ust.comp3021.game.AbstractSokobanGame;
 import hk.ust.comp3021.game.GameState;
 import hk.ust.comp3021.game.InputEngine;
 import hk.ust.comp3021.game.RenderingEngine;
-import hk.ust.comp3021.utils.NotImplementedException;
 
 /**
  * A Sokoban game running in the terminal.
@@ -56,6 +55,8 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
             // TODO: update game states and map
         }
-        throw new NotImplementedException();
+
+        this.renderingEngine.message("Game exits.");
+        this.renderingEngine.message("You win.");
     }
 }

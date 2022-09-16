@@ -35,7 +35,7 @@ public class TerminalInputEngine implements InputEngine {
         // Feel free to change it if you do not like it.
         final var inputLine = terminalScanner.nextLine();
 
-        // TODO
+        // DONE
         String instruction = inputLine.strip().toUpperCase();
 
         // EXIT: exit game

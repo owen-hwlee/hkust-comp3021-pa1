@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -24,12 +25,12 @@ import java.util.Set;
 public class GameState {
 
     // Current locations of all crates
-    private Set<Position> currentCratesLocations;
+    private Map<Position, Integer> currentCratesLocations;
     // One move history
     // Current location of player
-    private Position currentPlayerLocation;
+    private Map<Position, Integer> currentPlayersLocations;
     // Undo quota left
-    private int undoQuota;
+    private int undoQuotaLeft;
 
     /**
      * Create a running game state from a game map.
@@ -92,8 +93,12 @@ public class GameState {
      * {@link Optional#empty()} if the game has unlimited undo.
      */
     public Optional<Integer> getUndoQuota() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        if (this.undoQuotaLeft == -1) {
+            return Optional.empty();
+        } else {
+            return Optional.of(this.undoQuotaLeft);
+        }
     }
 
     /**

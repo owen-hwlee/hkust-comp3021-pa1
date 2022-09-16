@@ -1,13 +1,12 @@
 package hk.ust.comp3021.game;
 
 import hk.ust.comp3021.entities.*;
-import hk.ust.comp3021.utils.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 /**
  * A Sokoban game board.
@@ -23,7 +22,10 @@ public class GameMap {
 
     private int maxWidth;
     private int maxHeight;
+    private Set<Position> wallsPositions;
     private Set<Position> destinations;
+    private Map<Position, Integer> initialBoxesPositions;
+    private Map<Position, Integer> initialPlayersPositions;
     private int undoLimit;
     private Entity[][] entities;
 
@@ -44,7 +46,6 @@ public class GameMap {
         this.maxHeight = maxHeight;
         this.destinations = destinations;
         this.undoLimit = undoLimit;
-        this.entities = new Entity[maxWidth][maxHeight];
     }
 
     /**
@@ -83,94 +84,110 @@ public class GameMap {
      *                                  or if there are players that have no corresponding boxes.
      */
     public static GameMap parse(String mapText) {
-        // TODO
-        String[] mapTextLines = mapText.split("\n");
-        int undoLimit = Integer.parseInt(mapTextLines[0].strip());
+        // DONE
+        String[] mapTextLines = mapText.split("\\R");
+        int undoLimit = Integer.parseInt(mapTextLines[0]);
         if (undoLimit < -1) {
             throw new IllegalArgumentException("undoLimit does not accept negative numbers smaller than -1.");
         }
 
-        int maxHeight = mapTextLines.length - 1, maxWidth = 0;
+        final int maxHeight = mapTextLines.length - 1;
+        int maxWidth = 0;
         Set<Position> destinations = new HashSet<>();
-        Set<Character> playerSet = new HashSet<>();
-        List<Character> boxList = new ArrayList<>();
+        Map<Position, Integer> initialBoxesPositions = new HashMap<>();
+        Map<Position, Integer> initialPlayersPositions = new HashMap<>();
+        Set<Position> wallsPositions = new HashSet<>();
 
-        for (int i = 1; i < mapTextLines.length; ++i) {
-            String currentLine = mapTextLines[i].strip();
-            if (maxWidth < currentLine.length()) {
-                maxWidth = currentLine.length();
+        for (String currentLine: mapTextLines) {
+            int lineLength = currentLine.length();
+            if (maxWidth < lineLength) {
+                maxWidth = lineLength;
             }
-            for (int j = 0; j < currentLine.length(); ++j) {
-                char currentChar = currentLine.charAt(j);
+        }
+        Entity[][] entities = new Entity[maxWidth][maxHeight];
+
+
+        for (int y = 0; y < maxHeight; ++y) {
+            String currentLine = mapTextLines[y + 1];
+            int x = 0;
+            for (; x < currentLine.length(); ++x) {
+                char currentChar = currentLine.charAt(x);
 
                 // Case: Player
                 if (currentChar >= 'A' && currentChar <= 'Z') {
-                    // Repeated Player
-                    if (playerSet.contains(currentChar)) {
+                    int playerId = currentChar - 'A';
+                    if (initialPlayersPositions.containsValue(playerId)) {      // Repeated Player
                         throw new IllegalArgumentException("Multiple same upper-case letters in map.");
                     } else {
-                        playerSet.add(currentChar);
-                        // TODO: add Entity to array
+                        initialPlayersPositions.put(Position.of(x, y), playerId);
+                        entities[x][y] = new Player(playerId);
                     }
                 }
 
                 // Case: Box
                 if (currentChar >= 'a' && currentChar <= 'z') {
-                    boxList.add(currentChar);
-                    // TODO: add Entity to array
+                    int playerId = currentChar - 'a';
+                    initialBoxesPositions.put(Position.of(x, y), playerId);
+                    entities[x][y] = new Box(playerId);
                 }
 
                 // Case: Wall
                 if (currentChar == '#') {
-                    // TODO: add Wall
-                    // new Wall();
+                    wallsPositions.add(Position.of(x, y));
+                    entities[x][y] = new Wall();
                 }
 
                 // Case: Destination
                 if (currentChar == '@') {
-                    destinations.add(Position.of(j, i - 1));
+                    destinations.add(Position.of(x, y));
+                    entities[x][y] = new Empty();
                 }
 
                 // Case: Empty
                 if (currentChar == '.') {
-                    // new Empty();
+                    entities[x][y] = new Empty();
                 }
 
                 // Case: null
                 if (currentChar == ' ') {
-                    // null;
+                    entities[x][y] = new Empty();
                 }
             }
 
             // End of line but still not reach maxWidth
-            for (int j = currentLine.length(); j < maxWidth; ++j) {
-                // new Empty();
+            for (; x < maxWidth; ++x) {
+                entities[x][y] = new Empty();
             }
         }
 
         // No players
-        if (playerSet.isEmpty()) {
+        if (initialPlayersPositions.isEmpty()) {
             throw new IllegalArgumentException("There are no players in the map.");
         }
 
         // Number of boxes and destinations mismatched
-        if (destinations.size() != boxList.size()) {
+        if (destinations.size() != initialBoxesPositions.size()) {
             throw new IllegalArgumentException("Number of boxes is not equal to number of box destinations");
         }
 
         // Unmatched players and boxes
-        for (char player: playerSet) {
-            if (!boxList.contains((char)(player + 'a' - 'A'))) {
+        for (int playerId: initialPlayersPositions.values()) {
+            if (!initialBoxesPositions.containsValue(playerId)) {
                 throw new IllegalArgumentException("Player has unmatched box");
             }
         }
-        for (char box: boxList.stream().collect(Collectors.toSet())) {
-            if (!playerSet.contains((char)(box + 'A' - 'a'))) {
+        for (int playerId: initialBoxesPositions.values()) {
+            if (!initialPlayersPositions.containsValue(playerId)) {
                 throw new IllegalArgumentException("Box has unmatched Player");
             }
         }
 
-        return new GameMap(maxWidth, maxHeight, destinations, undoLimit);
+        GameMap tempGameMap = new GameMap(maxWidth, maxHeight, destinations, undoLimit);
+        tempGameMap.entities = entities;
+        tempGameMap.initialBoxesPositions = initialBoxesPositions;
+        tempGameMap.initialPlayersPositions = initialPlayersPositions;
+        tempGameMap.wallsPositions = wallsPositions;
+        return tempGameMap;
     }
 
     /**
@@ -181,8 +198,8 @@ public class GameMap {
      */
     @Nullable
     public Entity getEntity(Position position) {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.entities[position.x()][position.y()];
     }
 
     /**
@@ -192,8 +209,8 @@ public class GameMap {
      * @param entity   the entity to put into game map.
      */
     public void putEntity(Position position, Entity entity) {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        this.entities[position.x()][position.y()] = entity;
     }
 
     /**
@@ -222,8 +239,8 @@ public class GameMap {
      * @return a set of player id.
      */
     public Set<Integer> getPlayerIds() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return new HashSet<>(initialPlayersPositions.values());
     }
 
     /**

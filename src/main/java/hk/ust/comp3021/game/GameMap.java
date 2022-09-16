@@ -150,13 +150,13 @@ public class GameMap {
 
                 // Case: null
                 if (currentChar == ' ') {
-                    entities[x][y] = new Empty();
+                    entities[x][y] = null;
                 }
             }
 
             // End of line but still not reach maxWidth
             for (; x < maxWidth; ++x) {
-                entities[x][y] = new Empty();
+                entities[x][y] = null;
             }
         }
 

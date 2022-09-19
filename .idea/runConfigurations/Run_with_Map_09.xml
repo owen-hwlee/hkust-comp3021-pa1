@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Run with Map 01" type="Application" factoryName="Application" folderName="Successful Maps">
+  <configuration default="false" name="Run with Map 09" type="Application" factoryName="Application" folderName="Failed Maps">
     <option name="MAIN_CLASS_NAME" value="hk.ust.comp3021.Sokoban" />
     <module name="Sokoban.main" />
-    <option name="PROGRAM_PARAMETERS" value="&quot;$ProjectFileDir$/src/main/resources/map01.map&quot;" />
+    <option name="PROGRAM_PARAMETERS" value="&quot;$ProjectFileDir$/src/main/resources/map09.map&quot;" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="hk.ust.comp3021.*" />

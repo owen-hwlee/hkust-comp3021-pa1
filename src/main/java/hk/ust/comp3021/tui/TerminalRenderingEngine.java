@@ -31,8 +31,8 @@ public class TerminalRenderingEngine implements RenderingEngine {
                 final var charToPrint = switch (entity) {
                     // DONE
                     case Wall ignored -> '#';
-                    case Box b -> ('a' + b.getPlayerId());
-                    case Player p -> ('A' + p.getId());
+                    case Box b -> (char) ('a' + b.getPlayerId());
+                    case Player p -> (char) ('A' + p.getId());
                     case Empty ignored -> {
                         if (state.getDestinations().contains(Position.of(x, y))) {
                             yield '@';

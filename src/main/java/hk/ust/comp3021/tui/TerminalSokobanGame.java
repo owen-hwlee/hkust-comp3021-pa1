@@ -39,24 +39,34 @@ public class TerminalSokobanGame extends AbstractSokobanGame {
 
     @Override
     public void run() {
-        // TODO
+        // DONE
         this.renderingEngine.message("Sokoban game is ready.");
+        this.renderingEngine.render(this.state);
 
         // Game terminates when the game is won or the player performs Exit action
         // Deadlock checking is not required
         while (!this.shouldStop()) {
             // Game loop
-            this.renderingEngine.render(this.state);
-            this.renderingEngine.message("\nUndo Quota: %d".formatted(this.state.getUndoQuota()));
+            if (this.state.getUndoQuota().isPresent()) {
+                this.renderingEngine.message("Undo Quota: %d".formatted(this.state.getUndoQuota().get()));
+            } else {
+                this.renderingEngine.message("Unlimited");
+            }
             this.renderingEngine.message(">>>");
 
-            // TODO: conduct the action fetched
-            ActionResult actionResult = this.processAction(this.inputEngine.fetchAction());
+            switch (this.processAction(this.inputEngine.fetchAction())) {
+                case ActionResult.Success success -> {}
+                case ActionResult.Failed failed -> {
+                    this.renderingEngine.message(failed.getReason());
+                }
+            }
 
-            // TODO: update game states and map
+            this.renderingEngine.render(this.state);
         }
 
         this.renderingEngine.message("Game exits.");
-        this.renderingEngine.message("You win.");
+        if (this.state.isWin()) {
+            this.renderingEngine.message("You win.");
+        }
     }
 }

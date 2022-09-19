@@ -132,6 +132,11 @@ java --enable-preview -jar Sokoban-proguard.jar path/to/game/map/file.
 ```
 We provide two sample game map in the `src/main/resources` folder.
 
+## Run Check Style
+
+We have preconfigrued a gradle task to check style for you.
+You can run `gradle checkstyleMain` in the integrated terminal of IntelliJ to check style.
+
 ## Academic Integrity
 
 We trust that you are familiar with HKUST's Honor Code. If not, refer to

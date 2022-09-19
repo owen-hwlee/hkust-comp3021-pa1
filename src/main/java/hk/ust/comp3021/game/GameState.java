@@ -1,14 +1,12 @@
 package hk.ust.comp3021.game;
 
-import hk.ust.comp3021.entities.Entity;
-import hk.ust.comp3021.utils.NotImplementedException;
+import hk.ust.comp3021.actions.Action;
+import hk.ust.comp3021.entities.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The state of the Sokoban Game.
@@ -24,13 +22,19 @@ import java.util.Set;
  */
 public class GameState {
 
+    private final GameMap originalGameMap;
     // Current locations of all crates
     private Map<Position, Integer> currentCratesLocations;
-    // One move history
+    // Most recent Action
+    Action mostRecentAction;
     // Current location of player
-    private Map<Position, Integer> currentPlayersLocations;
+    private Map<Integer, Position> currentPlayersLocations;
     // Undo quota left
     private int undoQuotaLeft;
+    // Map of Entity at current instance
+    private Entity[][] currentMap;
+    // Checkpoints
+    private List<Entity[][]> checkpoints;
 
     /**
      * Create a running game state from a game map.
@@ -38,8 +42,13 @@ public class GameState {
      * @param map the game map from which to create this game state.
      */
     public GameState(@NotNull GameMap map) {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        this.originalGameMap = map;
+        this.undoQuotaLeft = originalGameMap.getUndoLimit().isPresent() ? originalGameMap.getUndoLimit().get() : -1;
+        this.checkpoints = new ArrayList<>();
+
+        this.currentMap = this.initializeMapFromOriginalGameMap();
+        this.updateStatesFromCurrentMap();
     }
 
     /**
@@ -49,8 +58,8 @@ public class GameState {
      * @return the current position of the player.
      */
     public @Nullable Position getPlayerPositionById(int id) {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.currentPlayersLocations.get(id);
     }
 
     /**
@@ -59,8 +68,8 @@ public class GameState {
      * @return a set of positions of all players.
      */
     public @NotNull Set<Position> getAllPlayerPositions() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return new HashSet<>(this.currentPlayersLocations.values());
     }
 
     /**
@@ -70,8 +79,8 @@ public class GameState {
      * @return the entity object.
      */
     public @Nullable Entity getEntity(@NotNull Position position) {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.currentMap[position.x()][position.y()];
     }
 
     /**
@@ -81,8 +90,8 @@ public class GameState {
      * @return a set of positions.
      */
     public @NotNull @Unmodifiable Set<Position> getDestinations() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.originalGameMap.getDestinations();
     }
 
     /**
@@ -108,8 +117,8 @@ public class GameState {
      * @return true is the game wins.
      */
     public boolean isWin() {
-// TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.originalGameMap.getDestinations().containsAll(this.currentCratesLocations.keySet());
     }
 
     /**
@@ -121,8 +130,23 @@ public class GameState {
      * @param to   The position to move the entity to.
      */
     public void move(Position from, Position to) {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        // Perform swapping 2 Entities Positions
+        Entity entityFrom = this.currentMap[from.x()][from.y()];
+
+        switch (entityFrom) {
+            case Player player -> this.currentPlayersLocations.put(player.getId(), to);
+            case Box box -> {
+                this.currentCratesLocations.remove(from);
+                this.currentCratesLocations.put(to, box.getPlayerId());
+                // Checkpoint on Box move
+                this.checkpoint();
+            }
+            case null, default -> {}
+        }
+
+        this.currentMap[from.x()][from.y()] = this.currentMap[to.x()][to.y()];
+        this.currentMap[to.x()][to.y()] = entityFrom;
     }
 
     /**
@@ -134,8 +158,8 @@ public class GameState {
      * Every undo actions reverts the game state to the last checkpoint.
      */
     public void checkpoint() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        this.checkpoints.add(this.currentMap.clone());
     }
 
     /**
@@ -147,7 +171,22 @@ public class GameState {
      */
     public void undo() {
         // TODO
-        throw new NotImplementedException();
+        if (this.getUndoQuota().isPresent()) {
+            this.undoQuotaLeft--;
+        }
+
+        this.mostRecentAction = null;
+
+        if (this.checkpoints.isEmpty()) {
+            // Revert to initial game state
+            this.currentMap = this.initializeMapFromOriginalGameMap();
+        } else {
+            // Revert to previous checkpoint
+            this.currentMap = this.checkpoints.remove(this.checkpoints.size() - 1);
+        }
+
+        this.updateStatesFromCurrentMap();
+        // TODO: figure out what using checkpoint in undo() means
     }
 
     /**
@@ -157,8 +196,8 @@ public class GameState {
      * @return maximum width.
      */
     public int getMapMaxWidth() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.originalGameMap.getMaxWidth();
     }
 
     /**
@@ -168,7 +207,32 @@ public class GameState {
      * @return maximum height.
      */
     public int getMapMaxHeight() {
-        // TODO
-        throw new NotImplementedException();
+        // DONE
+        return this.originalGameMap.getMaxHeight();
+    }
+
+    // Helper functions
+    private Entity[][] initializeMapFromOriginalGameMap() {
+        Entity[][] tempMap = new Entity[this.getMapMaxWidth()][this.getMapMaxHeight()];
+        for (int x = 0; x < this.getMapMaxWidth(); ++x) {
+            for (int y = 0; y < this.getMapMaxHeight(); ++y) {
+                tempMap[x][y] = this.originalGameMap.getEntity(Position.of(x, y));
+            }
+        }
+        return tempMap;
+    }
+
+    private void updateStatesFromCurrentMap() {
+        this.currentCratesLocations = new HashMap<>();
+        this.currentPlayersLocations = new HashMap<>();
+        for (int x = 0; x < this.getMapMaxWidth(); ++x) {
+            for (int y = 0; y < this.getMapMaxHeight(); ++y) {
+                switch (this.getEntity(Position.of(x, y))) {
+                    case Box box -> this.currentCratesLocations.put(Position.of(x, y), box.getPlayerId());
+                    case Player player -> this.currentPlayersLocations.put(player.getId(), Position.of(x, y));
+                    case null, default -> {}
+                }
+            }
+        }
     }
 }

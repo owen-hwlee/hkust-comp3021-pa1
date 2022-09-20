@@ -163,7 +163,7 @@ Additional maps were created by me to test for different cases and edge cases:
     - Height: 6
   - 1 Player (A)
   - <span style="color: red">2 Types of Box (a, b)</span>
-  - 4 Boxes (4a, 1b)
+  - 5 Boxes (4a, 1b)
   - 5 Destinations
   - No deadlock
 - `map11.map` (TODO)

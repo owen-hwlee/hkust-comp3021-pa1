@@ -40,7 +40,7 @@ public abstract class AbstractSokobanGame implements SokobanGame {
      * @return The result of the action.
      */
     protected ActionResult processAction(@NotNull Action action) {
-        // TODO
+        // DONE
         // All updates to GameState after each Action are performed in this function
 
         this.state.mostRecentAction = action;
@@ -56,10 +56,8 @@ public abstract class AbstractSokobanGame implements SokobanGame {
                     // Undo quota used up
                     yield new ActionResult.Failed(undo, "You have run out of your undo quota.");
                 } else {
-                    // Undo to last checkpoint, unless nothing moved
-                    if (false) {        // TODO: check boxes moved
-                        this.state.undo();
-                    }
+                    // Undo to last checkpoint
+                    this.state.undo();
                     yield new ActionResult.Success(undo);
                 }
             }
@@ -96,6 +94,8 @@ public abstract class AbstractSokobanGame implements SokobanGame {
                                 // Can push box
                                 this.state.move(nextDestination, nextNextDestination);
                                 this.state.move(playerPosition, nextDestination);
+                                // Checkpoint after moving Box
+                                this.state.checkpoint();
                                 yield new ActionResult.Success(move);
                             }
                             case null, default -> {

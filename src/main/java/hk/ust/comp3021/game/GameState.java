@@ -34,7 +34,7 @@ public class GameState {
     // Map of Entity at current instance
     private Entity[][] currentMap;
     // Checkpoints
-    private List<Entity[][]> checkpoints;
+    private List<Checkpoint> checkpoints;
 
     /**
      * Create a running game state from a game map.
@@ -139,8 +139,6 @@ public class GameState {
             case Box box -> {
                 this.currentCratesLocations.remove(from);
                 this.currentCratesLocations.put(to, box.getPlayerId());
-                // Checkpoint on Box move
-                this.checkpoint();
             }
             case null, default -> {}
         }
@@ -159,7 +157,7 @@ public class GameState {
      */
     public void checkpoint() {
         // DONE
-        this.checkpoints.add(this.currentMap.clone());
+        this.checkpoints.add(Checkpoint.of(this.currentPlayersLocations, this.currentCratesLocations));
     }
 
     /**
@@ -170,23 +168,46 @@ public class GameState {
      * revert to the initial game state.
      */
     public void undo() {
-        // TODO
+        // DONE
         if (this.getUndoQuota().isPresent()) {
             this.undoQuotaLeft--;
         }
 
         this.mostRecentAction = null;
 
+        this.checkpoints.remove(this.checkpoints.size() - 1);
         if (this.checkpoints.isEmpty()) {
             // Revert to initial game state
             this.currentMap = this.initializeMapFromOriginalGameMap();
         } else {
             // Revert to previous checkpoint
-            this.currentMap = this.checkpoints.remove(this.checkpoints.size() - 1);
+            Checkpoint checkpoint = this.checkpoints.get(this.checkpoints.size() - 1);
+
+            // Remove Players and Boxes from currentMap
+            for (int playerId: checkpoint.playerLocations.keySet()) {
+                // Remove Player from currentMap
+                Position playerPosition = this.getPlayerPositionById(playerId);
+                this.currentMap[playerPosition.x()][playerPosition.y()] = new Empty();
+            }
+            for (Position cratePosition: this.currentCratesLocations.keySet()) {
+                // Remove Box from currentMap
+                this.currentMap[cratePosition.x()][cratePosition.y()] = new Empty();
+            }
+
+            // Add Players and Boxes to currentMap by Checkpoint Positions
+            for (int playerId: checkpoint.playerLocations.keySet()) {
+                // Add Player to currentMap
+                Position playerPosition = checkpoint.playerLocations.get(playerId);
+                this.currentMap[playerPosition.x()][playerPosition.y()] = new Player(playerId);
+            }
+            for (Position cratePosition: checkpoint.cratesLocations.keySet()) {
+                // Add Box to currentMap
+                int playerId = checkpoint.cratesLocations.get(cratePosition);
+                this.currentMap[cratePosition.x()][cratePosition.y()] = new Box(playerId);
+            }
         }
 
         this.updateStatesFromCurrentMap();
-        // TODO: figure out what using checkpoint in undo() means
     }
 
     /**
@@ -233,6 +254,18 @@ public class GameState {
                     case null, default -> {}
                 }
             }
+        }
+    }
+
+    private record Checkpoint(
+            Map<Integer, Position> playerLocations,
+            Map<Position, Integer> cratesLocations
+    ) {
+        static @NotNull Checkpoint of(
+                Map<Integer, Position> playerLocations,
+                Map<Position, Integer> cratesLocations
+        ) {
+            return new Checkpoint(new HashMap<>(playerLocations), new HashMap<>(cratesLocations));
         }
     }
 }

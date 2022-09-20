@@ -136,7 +136,7 @@ Additional maps were created by me to test for different cases and edge cases:
   - 2 Boxes (2a)
   - 2 Destinations
   - No deadlock
-- `map08.map` (TODO)
+- `map08.map`
   - 5 undo limits
   - Square map
     - Width: 6
@@ -146,7 +146,7 @@ Additional maps were created by me to test for different cases and edge cases:
   - 0 Boxes ()
   - 0 Destinations
   - No deadlock
-- `map09.map` (TODO)
+- `map09.map`
   - 5 undo limits
   - Non-square map
     - Width: 7
@@ -156,7 +156,7 @@ Additional maps were created by me to test for different cases and edge cases:
   - 4 Boxes (4a)
   - 4 Destinations
   - No deadlock
-- `map10.map` (TODO)
+- `map10.map`
   - 5 undo limits
   - Non-square map
     - Width: 7
@@ -166,7 +166,7 @@ Additional maps were created by me to test for different cases and edge cases:
   - 5 Boxes (4a, 1b)
   - 5 Destinations
   - No deadlock
-- `map11.map` (TODO)
+- `map11.map`
   - 5 undo limits
   - Non-square map
     - Width: 7
@@ -176,7 +176,7 @@ Additional maps were created by me to test for different cases and edge cases:
   - 4 Boxes (4a)
   - <span style="color: red">5 Destinations</span>
   - No deadlock
-- `map12.map` (TODO)
+- `map12.map`
   - 5 undo limits
   - Non-square map
     - Width: 7

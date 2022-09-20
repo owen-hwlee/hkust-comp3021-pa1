@@ -169,13 +169,15 @@ public class GameState {
      */
     public void undo() {
         // DONE
-        if (this.getUndoQuota().isPresent()) {
+        if (this.getUndoQuota().isPresent() && !this.checkpoints.isEmpty()) {
             this.undoQuotaLeft--;
         }
 
         this.mostRecentAction = null;
 
-        this.checkpoints.remove(this.checkpoints.size() - 1);
+        if (!this.checkpoints.isEmpty()) {
+            this.checkpoints.remove(this.checkpoints.size() - 1);
+        }
         if (this.checkpoints.isEmpty()) {
             // Revert to initial game state
             this.currentMap = this.initializeMapFromOriginalGameMap();

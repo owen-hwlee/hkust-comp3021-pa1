@@ -65,6 +65,8 @@ Please make sure all the amendments are made before the deadline and do not make
 
 Should you have any questions, please go to [Discussion](https://docs.github.com/en/discussions/quickstart#creating-a-new-discussion) of this repository to ask and view other students' questions and answers.
 TAs will assist you there.
+**There is a FAQ pinned on the top.**
+Be sure that you read it through before ask questions.
 
 ## Game Specification
 

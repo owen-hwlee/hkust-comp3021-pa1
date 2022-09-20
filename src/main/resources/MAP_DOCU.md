@@ -19,7 +19,7 @@ This document summarizes the characteristics of different game maps listed in th
   - Player move to Empty
   - Player pushes one own Box to Empty
 - ActionResult.Failed
-  - null
+  - null (possibly out of scope)
   - Box
     - Player pushes more than one own Box
     - Player pushes one own Box into another non-Empty Entity
@@ -146,12 +146,46 @@ Additional maps were created by me to test for different cases and edge cases:
   - 0 Boxes ()
   - 0 Destinations
   - No deadlock
-(TODO)
-
-
-
-
-
+- `map09.map` (TODO)
+  - 5 undo limits
+  - Non-square map
+    - Width: 7
+    - Height: 6
+  - 2 Players (A, B)
+  - <span style="color: red">1 Type of Box (a)</span>
+  - 4 Boxes (4a)
+  - 4 Destinations
+  - No deadlock
+- `map10.map` (TODO)
+  - 5 undo limits
+  - Non-square map
+    - Width: 7
+    - Height: 6
+  - 1 Player (A)
+  - <span style="color: red">2 Types of Box (a, b)</span>
+  - 4 Boxes (4a, 1b)
+  - 5 Destinations
+  - No deadlock
+- `map11.map` (TODO)
+  - 5 undo limits
+  - Non-square map
+    - Width: 7
+    - Height: 6
+  - 1 Player (A)
+  - 1 Type of Box (a)
+  - 4 Boxes (4a)
+  - <span style="color: red">5 Destinations</span>
+  - No deadlock
+- `map12.map` (TODO)
+  - 5 undo limits
+  - Non-square map
+    - Width: 7
+    - Height: 6
+  - 1 Player (A)
+  - 1 Type of Box (a)
+  - 4 Boxes (4a)
+  - <span style="color: red">0 Destinations</span>
+  - No deadlock
 
 
 ## This is the end of this documentation.

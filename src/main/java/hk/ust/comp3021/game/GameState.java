@@ -236,8 +236,9 @@ public class GameState {
 
     // Helper functions
     private Entity[][] initializeMapFromOriginalGameMap() {
-        Entity[][] tempMap = new Entity[this.getMapMaxWidth()][this.getMapMaxHeight()];
+        Entity[][] tempMap = new Entity[this.getMapMaxWidth()][];
         for (int x = 0; x < this.getMapMaxWidth(); ++x) {
+            tempMap[x] = new Entity[this.getMapMaxHeight()];
             for (int y = 0; y < this.getMapMaxHeight(); ++y) {
                 tempMap[x][y] = this.originalGameMap.getEntity(Position.of(x, y));
             }
